@@ -1,13 +1,33 @@
 import {
+  json,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
-} from "@remix-run/react";
-import "./tailwind.css";
+  useLoaderData,
+} from '@remix-run/react';
+
+import AuthProvider from './context/AuthProvider';
+import SnackbarProvider from './context/SnackbarProvider';
+import './tailwind.css';
+
+export async function loader() {
+  return json({
+    ENV: {
+      FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
+      FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
+      FIREBASE_APP_AUTH_DOMAIN: process.env.FIREBASE_APP_AUTH_DOMAIN,
+      FIREBASE_APP_PROJECT_ID: process.env.FIREBASE_APP_PROJECT_ID,
+      FIREBASE_APP_STORAGE_BUCKET: process.env.FIREBASE_APP_STORAGE_BUCKET,
+      FIREBASE_APP_SENDER_ID: process.env.FIREBASE_APP_SENDER_ID,
+    },
+  });
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const data = useLoaderData<typeof loader>();
+
   return (
     <html lang="en">
       <head>
@@ -17,8 +37,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
+        <AuthProvider>
+          <SnackbarProvider>{children}</SnackbarProvider>
+        </AuthProvider>
         <ScrollRestoration />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.ENV = ${JSON.stringify(data.ENV)}`,
+          }}
+        />
         <Scripts />
       </body>
     </html>
