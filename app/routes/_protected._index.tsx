@@ -1,4 +1,5 @@
-import { useCustomFetcher } from '~/hooks';
+import { useCustomFetcher } from "~/hooks";
+import { Button } from "~/components/ui/button";
 
 export default function Index() {
   const { submit: handleUserLogout } = useCustomFetcher();
@@ -7,15 +8,15 @@ export default function Index() {
     handleUserLogout(
       {},
       {
-        action: '/logout',
-        method: 'post',
-      }
+        action: "/logout",
+        method: "post",
+      },
     );
   };
 
   return (
     <div className="font-sans p-4">
-      <button onClick={handleLogout}>LOG OUT</button>
+      <Button onClick={handleLogout}>LOG OUT</Button>
     </div>
   );
 }

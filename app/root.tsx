@@ -1,3 +1,4 @@
+import { LinksFunction } from "@remix-run/node";
 import {
   json,
   Links,
@@ -6,11 +7,15 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
-} from '@remix-run/react';
+} from "@remix-run/react";
 
-import AuthProvider from './context/AuthProvider';
-import SnackbarProvider from './context/SnackbarProvider';
-import './tailwind.css';
+import AuthProvider from "./context/AuthProvider";
+import SnackbarProvider from "./context/SnackbarProvider";
+import stylesheet from "~/tailwind.css?url";
+
+export const links: LinksFunction = () => [
+  { rel: "stylesheet", href: stylesheet },
+];
 
 export async function loader() {
   return json({

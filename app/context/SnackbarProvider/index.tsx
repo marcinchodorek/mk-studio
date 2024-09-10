@@ -1,14 +1,16 @@
-import { createContext, useState } from 'react';
-import { Snackbar, Alert, AlertColor } from '@mui/material';
+import { createContext, useState } from "react";
+// import { Snackbar, Alert, AlertColor } from '@mui/material';
+
+//TODO fix provider with shadcn components
 
 interface SnackbarState {
   open: boolean;
   message: string;
-  severity: AlertColor;
+  severity: any;
 }
 
 interface SnackbarContextModel {
-  showSnackbar: (message: string, severity?: AlertColor) => void;
+  showSnackbar: (message: string, severity?: any) => void;
   closeSnackbar: () => void;
 }
 
@@ -24,13 +26,13 @@ export const SnackbarContext = createContext<SnackbarContextModel>({
 const SnackbarProvider = ({ children }: SnackbarProviderProps) => {
   const [snackbar, setSnackbar] = useState<SnackbarState>({
     open: false,
-    message: '',
-    severity: 'info',
+    message: "",
+    severity: "info",
   });
 
-  const showSnackbar: SnackbarContextModel['showSnackbar'] = (
+  const showSnackbar: SnackbarContextModel["showSnackbar"] = (
     message,
-    severity = 'info'
+    severity = "info",
   ) => {
     setSnackbar({
       open: true,
@@ -48,20 +50,20 @@ const SnackbarProvider = ({ children }: SnackbarProviderProps) => {
 
   return (
     <SnackbarContext.Provider value={{ showSnackbar, closeSnackbar }}>
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={closeSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert
-          onClose={closeSnackbar}
-          severity={snackbar.severity}
-          sx={{ width: '100%' }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      {/*<Snackbar*/}
+      {/*  open={snackbar.open}*/}
+      {/*  autoHideDuration={6000}*/}
+      {/*  onClose={closeSnackbar}*/}
+      {/*  anchorOrigin={{ vertical: 'top', horizontal: 'center' }}*/}
+      {/*>*/}
+      {/*  <Alert*/}
+      {/*    onClose={closeSnackbar}*/}
+      {/*    severity={snackbar.severity}*/}
+      {/*    sx={{ width: '100%' }}*/}
+      {/*  >*/}
+      {/*    {snackbar.message}*/}
+      {/*  </Alert>*/}
+      {/*</Snackbar>*/}
       {children}
     </SnackbarContext.Provider>
   );
