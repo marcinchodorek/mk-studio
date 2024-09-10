@@ -34,12 +34,19 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import handleEmailSignIn from "~/api/firebase/handleEmailSignIn";
+import { PASSWORD_REGEX } from "~/constants";
 
 const EmailLogInFormSchema = z.object({
-  email: z.string().email().min(1, { message: "Email is required" }),
+  email: z
+    .string({ required_error: "Email is required" })
+    .email()
+    .min(1, { message: "Email is required" }),
   password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters" }),
+    .string({ required_error: "Password must be at least 8 characters" })
+    .min(8, { message: "Password must be at least 8 characters" })
+    .regex(PASSWORD_REGEX, {
+      message: "Password must contain at least one uppercase letter",
+    }),
 });
 
 type FormData = z.infer<typeof EmailLogInFormSchema>;
@@ -141,7 +148,7 @@ export default function Login() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input type="password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

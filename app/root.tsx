@@ -1,4 +1,3 @@
-import { LinksFunction } from "@remix-run/node";
 import {
   json,
   Links,
@@ -8,14 +7,11 @@ import {
   ScrollRestoration,
   useLoaderData,
 } from "@remix-run/react";
+import { Toaster } from "~/components/ui/toaster";
 
 import AuthProvider from "./context/AuthProvider";
-import SnackbarProvider from "./context/SnackbarProvider";
-import stylesheet from "~/tailwind.css?url";
-
-export const links: LinksFunction = () => [
-  { rel: "stylesheet", href: stylesheet },
-];
+import ToastProvider from "./context/ToastProvider";
+import "./tailwind.css";
 
 export async function loader() {
   return json({
@@ -43,7 +39,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <AuthProvider>
-          <SnackbarProvider>{children}</SnackbarProvider>
+          <ToastProvider>{children}</ToastProvider>
+          <Toaster />
         </AuthProvider>
         <ScrollRestoration />
         <script
