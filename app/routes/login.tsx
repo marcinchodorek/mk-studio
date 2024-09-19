@@ -14,7 +14,7 @@ import {
   handleCreateCookieAndRedirect,
 } from "~/api/auth/sessionCookie";
 import handleGoogleSignIn from "~/api/firebase/handleGoogleSignIn";
-import admin from "~/api/firebase/serverConfig.server";
+import { admin } from "~/api/firebase/serverConfig.server";
 import { useCustomFetcher } from "~/hooks";
 import { Button } from "~/components/ui/button";
 import {

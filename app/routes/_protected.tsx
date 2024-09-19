@@ -1,25 +1,33 @@
-import { Outlet, redirect } from '@remix-run/react';
-import { LoaderFunctionArgs } from '@remix-run/node';
+import { Outlet, redirect } from "@remix-run/react";
+import { LoaderFunctionArgs } from "@remix-run/node";
 
-import { getSessionCookie, handleClearSession } from '~/api/auth/sessionCookie';
-import admin from '~/api/firebase/serverConfig.server';
+import { getSessionCookie, handleClearSession } from "~/api/auth/sessionCookie";
+import { admin } from "~/api/firebase/serverConfig.server";
+import SideNav from "~/components/SideNav";
+import TopBar from "~/components/TopBar";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const sessionCookieValue = await getSessionCookie(request);
 
   if (!sessionCookieValue) {
-    return redirect('/login');
+    return redirect("/login");
   }
 
   try {
     await admin.auth().verifySessionCookie(sessionCookieValue, true);
     return null;
   } catch (error) {
-    console.error('Session verification failed:', error);
+    console.error("Session verification failed:", error);
     return await handleClearSession(request);
   }
 }
 
 export default function ProtectedLayout() {
-  return <Outlet />;
+  return (
+    <TopBar>
+      <SideNav>
+        <Outlet />
+      </SideNav>
+    </TopBar>
+  );
 }

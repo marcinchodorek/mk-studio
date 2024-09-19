@@ -12,7 +12,7 @@ import {
   getSessionCookie,
   handleCreateCookieAndRedirect,
 } from "~/api/auth/sessionCookie";
-import admin from "~/api/firebase/serverConfig.server";
+import { admin } from "~/api/firebase/serverConfig.server";
 import { useCustomFetcher } from "~/hooks";
 import { Button } from "~/components/ui/button";
 import {

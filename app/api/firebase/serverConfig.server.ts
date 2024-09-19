@@ -1,4 +1,4 @@
-import admin, { ServiceAccount } from 'firebase-admin';
+import admin, { ServiceAccount } from "firebase-admin";
 
 const serviceAccount = {
   projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
@@ -12,4 +12,6 @@ if (!admin.apps.length) {
   });
 }
 
-export default admin;
+const db = admin.firestore();
+
+export { admin, db };

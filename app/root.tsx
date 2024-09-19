@@ -12,6 +12,8 @@ import { Toaster } from "~/components/ui/toaster";
 import AuthProvider from "./context/AuthProvider";
 import ToastProvider from "./context/ToastProvider";
 import "./tailwind.css";
+import SideNav from "~/components/SideNav";
+import TopBar from "~/components/TopBar";
 
 export async function loader() {
   return json({

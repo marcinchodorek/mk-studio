@@ -1,5 +1,5 @@
-import { createCookieSessionStorage, redirect } from '@remix-run/node';
-import admin from '../firebase/serverConfig.server';
+import { createCookieSessionStorage, redirect } from "@remix-run/node";
+import { admin } from "../firebase/serverConfig.server";
 
 type SessionBody = {
   sessionToken: string;
@@ -8,46 +8,46 @@ type SessionBody = {
 const { getSession, commitSession, destroySession } =
   createCookieSessionStorage<SessionBody>({
     cookie: {
-      name: 'sessionToken',
+      name: "sessionToken",
       maxAge: 60 * 60 * 24 * 5, // 5 days
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
       secrets: [process.env.AUTH_COOKIE_SECRET!],
     },
   });
 
 export const getSessionCookie = async (request: Request) => {
-  const session = await getSession(request.headers.get('Cookie'));
-  return session.get('sessionToken') as string;
+  const session = await getSession(request.headers.get("Cookie"));
+  return session.get("sessionToken") as string;
 };
 
 export const handleCreateCookieAndRedirect = async (
   request: Request,
-  idToken: string
+  idToken: string,
 ) => {
-  const session = await getSession(request.headers.get('Cookie'));
+  const session = await getSession(request.headers.get("Cookie"));
   const expiresIn = 60 * 60 * 24 * 5 * 1000; // 5 days
   await admin.auth().verifyIdToken(idToken);
   const sessionToken = await admin
     .auth()
     .createSessionCookie(idToken, { expiresIn });
 
-  session.set('sessionToken', sessionToken);
-  return redirect('/', {
+  session.set("sessionToken", sessionToken);
+  return redirect("/", {
     headers: {
-      'Set-Cookie': await commitSession(session),
+      "Set-Cookie": await commitSession(session),
     },
   });
 };
 
 export const handleClearSession = async (request: Request) => {
-  const session = await getSession(request.headers.get('Cookie'));
+  const session = await getSession(request.headers.get("Cookie"));
 
-  return redirect('/login', {
+  return redirect("/login", {
     headers: {
-      'Set-Cookie': await destroySession(session),
+      "Set-Cookie": await destroySession(session),
     },
   });
 };
