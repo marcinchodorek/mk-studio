@@ -1,13 +1,16 @@
-import { Outlet, redirect } from "@remix-run/react";
+import { json, Outlet, redirect, useLoaderData } from "@remix-run/react";
 import { LoaderFunctionArgs } from "@remix-run/node";
 
 import { getSessionCookie, handleClearSession } from "~/api/auth/sessionCookie";
 import { admin } from "~/api/firebase/serverConfig.server";
-import SideNav from "~/components/SideNav";
-import TopBar from "~/components/TopBar";
+import SideNav from "~/components/side-nav";
+import TopBar from "~/components/top-bar";
+import { getNavigationSessionCookie } from "~/api/sessions/navigation.server";
+import DynamicBreadcrumbs from "~/components/dynamic-breadcrumbs";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const sessionCookieValue = await getSessionCookie(request);
+  const isSideNavCollapsed = await getNavigationSessionCookie(request);
 
   if (!sessionCookieValue) {
     return redirect("/login");
@@ -15,7 +18,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   try {
     await admin.auth().verifySessionCookie(sessionCookieValue, true);
-    return null;
+    return json({ isSideNavCollapsed });
   } catch (error) {
     console.error("Session verification failed:", error);
     return await handleClearSession(request);
@@ -23,11 +26,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function ProtectedLayout() {
+  const { isSideNavCollapsed } = useLoaderData<typeof loader>();
+
   return (
-    <TopBar>
-      <SideNav>
+    <SideNav isSideNavOpen={!isSideNavCollapsed}>
+      <TopBar>
+        <DynamicBreadcrumbs />
         <Outlet />
-      </SideNav>
-    </TopBar>
+      </TopBar>
+    </SideNav>
   );
 }

@@ -4,3 +4,8 @@ node_modules
 /build
 .env
 .idea
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

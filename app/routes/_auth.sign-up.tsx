@@ -73,23 +73,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
 };
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  const sessionCookieValue = await getSessionCookie(request);
-
-  try {
-    await admin.auth().verifySessionCookie(sessionCookieValue, true);
-
-    if (sessionCookieValue) {
-      return redirect("/");
-    }
-
-    return null;
-  } catch (e) {
-    return null;
-  }
-}
-
-export default function SignUp() {
+export default function _authSignUp() {
   const { submit: handleLogInFetcher } = useCustomFetcher();
   const form = useForm<FormData>({ resolver });
 
@@ -112,7 +96,7 @@ export default function SignUp() {
   };
 
   return (
-    <Card className="mx-auto my-10 max-w-sm">
+    <Card className="m-auto max-w-sm">
       <CardHeader>
         <Link to="/login" className="ml-auto flex items-center gap-2 text-xs">
           <ArrowLeftIcon />

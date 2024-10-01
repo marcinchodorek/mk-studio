@@ -1,20 +1,11 @@
-import {
-  ActionFunction,
-  json,
-  LoaderFunctionArgs,
-  redirect,
-} from "@remix-run/node";
+import { ActionFunction, json } from "@remix-run/node";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { Link } from "@remix-run/react";
 
-import {
-  getSessionCookie,
-  handleCreateCookieAndRedirect,
-} from "~/api/auth/sessionCookie";
+import { handleCreateCookieAndRedirect } from "~/api/auth/sessionCookie";
 import handleGoogleSignIn from "~/api/firebase/handleGoogleSignIn";
-import { admin } from "~/api/firebase/serverConfig.server";
 import { useCustomFetcher } from "~/hooks";
 import { Button } from "~/components/ui/button";
 import {
@@ -62,23 +53,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
 };
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  const sessionCookieValue = await getSessionCookie(request);
-
-  try {
-    await admin.auth().verifySessionCookie(sessionCookieValue, true);
-
-    if (sessionCookieValue) {
-      return redirect("/");
-    }
-
-    return null;
-  } catch (e) {
-    return null;
-  }
-}
-
-export default function Login() {
+export default function _authLogin() {
   const { submit: handleLogInFetcher } = useCustomFetcher();
   const form = useForm<FormData>({ resolver });
 
@@ -117,7 +92,7 @@ export default function Login() {
   };
 
   return (
-    <Card className="mx-auto my-10 max-w-sm">
+    <Card className="m-auto max-w-sm">
       <CardHeader>
         <CardTitle className="text-2xl">Login</CardTitle>
         <CardDescription>
