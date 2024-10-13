@@ -11,6 +11,7 @@ import { UseFormReturn } from "react-hook-form";
 import {
   isValidPhoneNumber,
   parsePhoneNumber,
+  formatPhoneNumberIntl,
 } from "react-phone-number-input/min";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
@@ -31,6 +32,7 @@ import saveNewContact from "~/api/firebase/contacts/saveNewContact.server";
 import getContactById from "~/api/firebase/contacts/getContactById.server";
 import updateContactById from "~/api/firebase/contacts/updateContactById.server";
 import { Contact } from "~/api/firebase/contacts/types.server";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const { id } = params;
@@ -50,9 +52,6 @@ const querySchema = z.object({
 export const action: ActionFunction = async ({ request, params }) => {
   const formData = await request.formData();
   const { id, type } = querySchema.parse(params);
-
-  console.log(type);
-  console.log(formData);
 
   const contactsBody = {
     name: formData.get("name") as string,
@@ -103,64 +102,87 @@ export default function AddContact() {
     },
   });
 
+  const { name, lastName, phoneNumber } = form.getValues();
+
   const isSubmitting = useMemo(
     () => state === "submitting" || form.formState.isSubmitting,
     [state, form.formState.isSubmitting],
   );
 
   return (
-    <Form {...(form as unknown as UseFormReturn<FormData>)}>
-      <RemixForm method="post" className="w-full lg:w-1/2">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="lastName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Last Name</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="phoneNumber"
-          render={({ field }) => {
-            return (
+    <div className="flex gap-4">
+      <Form {...(form as unknown as UseFormReturn<FormData>)}>
+        <RemixForm method="post" className="w-full lg:w-1/2">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
               <FormItem>
-                <FormLabel>Phone Number</FormLabel>
+                <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <PhoneInput
-                    placeholder="Enter a phone number"
-                    defaultCountry="PL"
-                    international
-                    {...field}
-                  />
+                  <Input {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
-            );
-          }}
-        />
-        <Button className="mt-4" disabled={isSubmitting}>
-          {isAddContactPage ? "Add Contact" : "Edit Contact"}
-        </Button>
-      </RemixForm>
-    </Form>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Last Name</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="phoneNumber"
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel>Phone Number</FormLabel>
+                  <FormControl>
+                    <PhoneInput
+                      placeholder="Enter a phone number"
+                      defaultCountry="PL"
+                      international
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+          <Button
+            data-testid="create-contact"
+            className="mt-4"
+            disabled={isSubmitting}
+          >
+            {isAddContactPage ? "Add Contact" : "Edit Contact"}
+          </Button>
+        </RemixForm>
+      </Form>
+      <Card className="mx-auto w-1/3 h-fit self-center">
+        <CardHeader>
+          <CardTitle>User Data</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4">
+          <div>
+            <p className="font-bold">Name:</p>
+            <p>{`${name} ${lastName}`}</p>
+          </div>
+          <div>
+            <p className="font-bold">Phone Number:</p>
+            <p>{formatPhoneNumberIntl(phoneNumber)}</p>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

@@ -1,4 +1,4 @@
-import { Appointment } from "~/api/firebase/appointments-schedule/types.server";
+import { Schedule } from "~/api/firebase/scheduler/types.server";
 import {
   Table,
   TableBody,
@@ -28,16 +28,22 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
+import { useCustomFetcher } from "~/hooks";
+import { useNavigate } from "@remix-run/react";
 
-type AppointmentListProps = {
-  appointments: Appointment[];
+type SchedulesListProps = {
+  schedules: Schedule[];
   isLoading: boolean;
 };
 
-export default function AppointmentsList({
-  appointments,
+export default function SchedulesList({
+  schedules,
   isLoading,
-}: AppointmentListProps) {
+}: SchedulesListProps) {
+  const navigate = useNavigate();
+  const { submit, state } = useCustomFetcher();
+  const isDeleteScheduleLoading = state === "loading" || state === "submitting";
+
   if (isLoading) {
     return (
       <Card>
@@ -59,19 +65,33 @@ export default function AppointmentsList({
     );
   }
 
-  if (!appointments.length) {
+  if (!schedules.length) {
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-4">
-          <p className="font-bold">No appointments found</p>
+          <p>No schedules found</p>
         </CardContent>
       </Card>
     );
   }
 
-  const sortedAppointments = appointments.sort((a, b) =>
+  const sortedSchedules = schedules.sort((a, b) =>
     a.time.localeCompare(b.time),
   );
+
+  const handleDeleteSchedule = (id: string) => {
+    submit(
+      {},
+      {
+        method: "delete",
+        action: `/scheduler/${id}/delete`,
+      },
+    );
+  };
+
+  const handleUpdateSchedule = (id: string) => {
+    navigate(`/scheduler/${id}/update`);
+  };
 
   return (
     <Card className="flex flex-col gap-y-4 w-full h-fit overflow-y-auto">
@@ -85,26 +105,37 @@ export default function AppointmentsList({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedAppointments.map(({ time, contactName }) => {
+            {sortedSchedules.map(({ time, contactName, id }) => {
               return (
-                <TableRow key={time}>
+                <TableRow key={id}>
                   <TableCell>{time}</TableCell>
                   <TableCell>{contactName}</TableCell>
                   <TableCell className="text-right">
                     <AlertDialog>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost">
+                          <Button
+                            data-testid="scheduler-action-button"
+                            variant="ghost"
+                            disabled={isDeleteScheduleLoading}
+                          >
                             <EllipsisVertical />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
+                          {/*<DropdownMenuItem*/}
+                          {/*  onClick={() => handleUpdateSchedule(id)}*/}
+                          {/*>*/}
+                          {/*  Edit*/}
+                          {/*</DropdownMenuItem>*/}
                           <DropdownMenuItem
                             className="text-destructive"
                             asChild
                           >
-                            <AlertDialogTrigger className="w-full">
+                            <AlertDialogTrigger
+                              data-testid="actions-delete"
+                              className="w-full"
+                            >
                               Delete
                             </AlertDialogTrigger>
                           </DropdownMenuItem>
@@ -112,16 +143,19 @@ export default function AppointmentsList({
                       </DropdownMenu>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Appointment Delete
-                          </AlertDialogTitle>
+                          <AlertDialogTitle>Schedule Delete</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Are you sure you want to delete this appointment?
+                            Are you sure you want to delete this schedule?
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction>Delete</AlertDialogAction>
+                          <AlertDialogAction
+                            data-testid="actions-delete-confirm"
+                            onClick={() => handleDeleteSchedule(id)}
+                          >
+                            Delete
+                          </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>

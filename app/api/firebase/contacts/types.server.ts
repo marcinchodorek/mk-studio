@@ -1,4 +1,4 @@
-import { E164Number } from "libphonenumber-js";
+import { E164Number } from 'libphonenumber-js';
 
 export type ContactRequestBody = {
   name: string;
@@ -16,3 +16,5 @@ export type Contact = {
   createdAt: string;
   updatedAt?: string;
 };
+
+export type GroupedContactsById = Record<string, Contact>;

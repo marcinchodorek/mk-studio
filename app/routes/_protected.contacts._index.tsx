@@ -25,6 +25,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
+import { ActionFunctionArgs } from "@remix-run/node";
+import deleteContactById from "~/api/firebase/contacts/deleteContactById.server";
+import { ReturnLoaderResponse } from "~/constants/types";
 
 type Contact = {
   id: string;
@@ -35,12 +38,24 @@ type Contact = {
 };
 
 export async function loader() {
-  const contacts = await getContactsQuery();
+  const { contacts } = await getContactsQuery();
   return json(contacts);
 }
 
+type ContactsLoader = typeof loader;
+type ContactsResponse = ReturnLoaderResponse<ContactsLoader>;
+
+export async function action({ request }: ActionFunctionArgs) {
+  const formData = await request.formData();
+  const id = formData.get("id") as string;
+
+  await deleteContactById(id);
+
+  return null;
+}
+
 export default function Contacts() {
-  const contacts = useLoaderData<Contact[]>();
+  const contacts = useLoaderData<ContactsResponse>();
   const { submit } = useFetcher();
 
   const handleDeleteContactById = useCallback(
@@ -49,7 +64,6 @@ export default function Contacts() {
         { id },
         {
           method: "delete",
-          action: `/action/delete-contact`,
         },
       );
     },
@@ -110,21 +124,32 @@ export default function Contacts() {
             <AlertDialog>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost">
+                  <Button variant="ghost" data-testid="contact-actions">
                     <EllipsisVertical />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem asChild>
-                    <Link to={`/contacts/appointment-schedule/${rowId}`}>
+                    <Link
+                      data-testid="actions-schedule"
+                      to={`/scheduler/${rowId}`}
+                    >
                       Schedule
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to={`/contacts/edit/${rowId}`}>Edit</Link>
+                    <Link
+                      data-testid="actions-edit"
+                      to={`/contacts/edit/${rowId}`}
+                    >
+                      Edit
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem className="text-destructive" asChild>
-                    <AlertDialogTrigger className="w-full">
+                    <AlertDialogTrigger
+                      className="w-full"
+                      data-testid="actions-delete"
+                    >
                       Delete
                     </AlertDialogTrigger>
                   </DropdownMenuItem>
@@ -140,6 +165,7 @@ export default function Contacts() {
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction
+                    data-testid="actions-delete-confirm"
                     onClick={() => handleDeleteContactById(rowId)}
                   >
                     Delete
@@ -158,6 +184,7 @@ export default function Contacts() {
     <>
       <div className="flex justify-end">
         <Link
+          data-testid="add-contact"
           to={"/contacts/add"}
           className={buttonVariants({ variant: "default" })}
         >

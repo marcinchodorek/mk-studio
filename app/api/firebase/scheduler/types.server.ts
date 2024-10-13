@@ -1,11 +1,11 @@
-export type AppointmentRequestBody = {
+export type ScheduleRequestBody = {
   contactId: string;
   contactName: string;
   date: string;
   time: string;
 };
 
-export type Appointment = {
+export type Schedule = {
   id: string;
   contactId: string;
   contactName: string;
