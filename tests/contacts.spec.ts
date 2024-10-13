@@ -1,16 +1,10 @@
 import { test, expect } from "@playwright/test";
+import globalLoginHandler from "./utils/globalLoginHandler";
 
 test.describe.configure({ mode: "serial" });
 
 test.beforeEach(async ({ page }) => {
-  await page.goto("http://localhost:3000/login");
-  await page.getByPlaceholder("m@example.com").click();
-  await page.getByPlaceholder("m@example.com").fill("test@account.com");
-  await page.getByLabel("Password").click();
-  await page.getByLabel("Password").fill("Passwordtest");
-  await page.getByRole("button", { name: "Login", exact: true }).click();
-
-  await page.waitForURL("http://localhost:3000/");
+  await globalLoginHandler(page);
 });
 
 test("should create a contact", async ({ page }) => {
