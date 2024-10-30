@@ -33,6 +33,7 @@ import useTypedParams from "~/hooks/useTypedParams";
 import updateScheduleById from "~/api/firebase/scheduler/updateScheduleById";
 import getScheduleById from "~/api/firebase/scheduler/getScheduleById";
 import { Schedule } from "~/api/firebase/scheduler/types.server";
+import twilio from "twilio";
 
 export enum SchedulerType {
   Create = "create",
@@ -88,13 +89,42 @@ export async function action({ request, params }: ActionFunctionArgs) {
       const date = formData.get("date") as string;
       const contactName = formData.get("contactName") as string;
       const contactId = formData.get("contactId") as string;
+      const phoneNumber = formData.get("phoneNumber") as string;
 
-      await createSchedule({
-        contactId,
-        contactName,
-        date,
-        time,
-      });
+      const parsedDate = DateTime.fromFormat(
+        `${date} ${time}`,
+        "yyyy-MM-dd HH:mm",
+      )
+        .minus({ hours: 1 })
+        .toISO();
+
+      const now = DateTime.now().plus({ minute: 2 }).toJSDate();
+
+      console.log("parsedDate", parsedDate);
+      console.log("phoneNumber", phoneNumber);
+      console.log("contactName", contactName);
+      console.log("now", now);
+
+      const accountSid = process.env.TWILIO_ACCOUNT_SID;
+      const authToken = process.env.TWILIO_AUTH_TOKEN;
+
+      const client = twilio(accountSid, authToken);
+
+      // await client.messages.create({
+      //   body: `Message to ${contactName}`,
+      //   from: "+12568277567",
+      //   to: phoneNumber,
+      //   scheduleType: "fixed",
+      //   sendAt: now,
+      //   MessagingServiceSid: "",
+      // });
+
+      // await createSchedule({
+      //   contactId,
+      //   contactName,
+      //   date,
+      //   time,
+      // });
       return null;
     }
     case SchedulerType.Update: {
@@ -195,6 +225,7 @@ export default function Scheduler() {
             date: formattedDateValue,
             contactName: contactData.fullName,
             contactId: contactData.id,
+            phoneNumber: contactData.phoneNumber,
           },
           { method: "post", action: `/scheduler/${id}/create` },
         );

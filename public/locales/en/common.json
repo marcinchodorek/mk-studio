@@ -1,0 +1,9 @@
+{
+  "nav": {
+    "home": "Home",
+    "contacts": "Contacts",
+    "scheduler": "Scheduler",
+    "settings": "Settings"
+  },
+  "inf_contacts_phone_number": "Phone Number"
+}

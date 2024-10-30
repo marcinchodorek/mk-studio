@@ -28,6 +28,7 @@ import {
 import { ActionFunctionArgs } from "@remix-run/node";
 import deleteContactById from "~/api/firebase/contacts/deleteContactById.server";
 import { ReturnLoaderResponse } from "~/constants/types";
+import { useTranslation } from "react-i18next";
 
 type Contact = {
   id: string;
@@ -55,6 +56,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function Contacts() {
+  const { t } = useTranslation();
   const contacts = useLoaderData<ContactsResponse>();
   const { submit } = useFetcher();
 
@@ -112,7 +114,7 @@ export default function Contacts() {
       },
       {
         accessorKey: "phoneNumber",
-        header: "Phone Number",
+        header: t("inf_contacts_phone_number"),
         cell: ({ row }) => formatPhoneNumberIntl(row.original.phoneNumber),
       },
       {

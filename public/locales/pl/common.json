@@ -1,0 +1,9 @@
+{
+  "nav": {
+    "home": "Strona główna",
+    "contacts": "Kontakty",
+    "scheduler": "Kalendarz",
+    "settings": "Ustawienia"
+  },
+  "inf_contacts_phone_number": "Numer telefonu"
+}
