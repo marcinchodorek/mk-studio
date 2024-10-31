@@ -33,6 +33,7 @@ import getContactById from "~/api/firebase/contacts/getContactById.server";
 import updateContactById from "~/api/firebase/contacts/updateContactById.server";
 import { Contact } from "~/api/firebase/contacts/types.server";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { useTranslation } from "react-i18next";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const { id } = params;
@@ -76,17 +77,20 @@ export const action: ActionFunction = async ({ request, params }) => {
 };
 
 const ContactsSchema = z.object({
-  phoneNumber: z
+  phoneNumber: z.string().refine(isValidPhoneNumber, {
+    message: "contacts_form_phone_number_validation_error",
+  }),
+  name: z.string().min(1, { message: "contacts_form_name_validation_error" }),
+  lastName: z
     .string()
-    .refine(isValidPhoneNumber, { message: "Invalid phone number" }),
-  name: z.string().min(1, { message: "Name is required" }),
-  lastName: z.string().min(1, { message: "Last name is required" }),
+    .min(1, { message: "contacts_form_last_name_validation_error" }),
 });
 
 type FormData = z.infer<typeof ContactsSchema>;
 const resolver = zodResolver(ContactsSchema);
 
 export default function AddContact() {
+  const { t } = useTranslation();
   const { type } = useParams();
   const { state } = useNavigation();
   const contactData = useLoaderData<Contact>();
@@ -102,7 +106,11 @@ export default function AddContact() {
     },
   });
 
-  const { name, lastName, phoneNumber } = form.getValues();
+  const [name, lastName, phoneNumber] = form.watch([
+    "name",
+    "lastName",
+    "phoneNumber",
+  ]);
 
   const isSubmitting = useMemo(
     () => state === "submitting" || form.formState.isSubmitting,
@@ -110,7 +118,7 @@ export default function AddContact() {
   );
 
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-4 flex-col md:flex-row">
       <Form {...(form as unknown as UseFormReturn<FormData>)}>
         <RemixForm method="post" className="w-full lg:w-1/2">
           <FormField
@@ -118,7 +126,7 @@ export default function AddContact() {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>{t("contacts_form_name_label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -131,7 +139,7 @@ export default function AddContact() {
             name="lastName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Last Name</FormLabel>
+                <FormLabel>{t("contacts_form_last_name_label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -145,10 +153,10 @@ export default function AddContact() {
             render={({ field }) => {
               return (
                 <FormItem>
-                  <FormLabel>Phone Number</FormLabel>
+                  <FormLabel>{t("contacts_form_phone_number_label")}</FormLabel>
                   <FormControl>
                     <PhoneInput
-                      placeholder="Enter a phone number"
+                      placeholder={t("contacts_form_phone_number_placeholder")}
                       defaultCountry="PL"
                       international
                       {...field}
@@ -164,21 +172,23 @@ export default function AddContact() {
             className="mt-4"
             disabled={isSubmitting}
           >
-            {isAddContactPage ? "Add Contact" : "Edit Contact"}
+            {t(isAddContactPage ? "btn_add_contact" : "btn_edit_contact")}
           </Button>
         </RemixForm>
       </Form>
-      <Card className="mx-auto w-1/3 h-fit self-center">
+      <Card className="mx-auto w-full gap-4 md:w-1/3 h-fit self-center">
         <CardHeader>
-          <CardTitle>User Data</CardTitle>
+          <CardTitle>{t("contacts_form_user_data_title")}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           <div>
-            <p className="font-bold">Name:</p>
+            <p className="font-bold">{t("contacts_form_name_label")}:</p>
             <p>{`${name} ${lastName}`}</p>
           </div>
           <div>
-            <p className="font-bold">Phone Number:</p>
+            <p className="font-bold">
+              {t("contacts_form_phone_number_label")}:
+            </p>
             <p>{formatPhoneNumberIntl(phoneNumber)}</p>
           </div>
         </CardContent>

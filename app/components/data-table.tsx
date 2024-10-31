@@ -21,6 +21,7 @@ import {
 import { Button } from "~/components/ui/button";
 import { useState } from "react";
 import { Input } from "~/components/ui/input";
+import { useTranslation } from "react-i18next";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -33,6 +34,7 @@ export function DataTable<TData, TValue>({
   data,
   withFilter,
 }: DataTableProps<TData, TValue>) {
+  const { t } = useTranslation();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const table = useReactTable({
@@ -55,7 +57,7 @@ export function DataTable<TData, TValue>({
       {withFilter && (
         <div className="flex items-center py-4">
           <Input
-            placeholder="Filter..."
+            placeholder={t("data_table_filter_placeholder")}
             value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
               table.getColumn("name")?.setFilterValue(event.target.value)
@@ -107,7 +109,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  {t("data_table_no_results")}
                 </TableCell>
               </TableRow>
             )}

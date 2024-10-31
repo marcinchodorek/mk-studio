@@ -85,7 +85,7 @@ export default function Contacts() {
                 column.toggleSorting(column.getIsSorted() === "asc")
               }
             >
-              Name
+              {t("contacts_table_name_header")}
               <ArrowUpDown
                 className={twMerge("ml-2 h-4 w-4", isSorted && "text-blue-400")}
               />
@@ -104,7 +104,7 @@ export default function Contacts() {
                 column.toggleSorting(column.getIsSorted() === "asc")
               }
             >
-              Last Name
+              {t("contacts_table_last_name_header")}
               <ArrowUpDown
                 className={twMerge("ml-2 h-4 w-4", isSorted && "text-blue-400")}
               />
@@ -114,12 +114,12 @@ export default function Contacts() {
       },
       {
         accessorKey: "phoneNumber",
-        header: t("inf_contacts_phone_number"),
+        header: t("contacts_table_phone_number_header"),
         cell: ({ row }) => formatPhoneNumberIntl(row.original.phoneNumber),
       },
       {
         id: "actions",
-        header: "Action",
+        header: t("contacts_table_actions_header"),
         cell: ({ row }) => {
           const rowId = row.original.id;
           return (
@@ -136,7 +136,7 @@ export default function Contacts() {
                       data-testid="actions-schedule"
                       to={`/scheduler/${rowId}`}
                     >
-                      Schedule
+                      {t("btn_schedule")}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
@@ -144,7 +144,7 @@ export default function Contacts() {
                       data-testid="actions-edit"
                       to={`/contacts/edit/${rowId}`}
                     >
-                      Edit
+                      {t("btn_edit")}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem className="text-destructive" asChild>
@@ -152,25 +152,27 @@ export default function Contacts() {
                       className="w-full"
                       data-testid="actions-delete"
                     >
-                      Delete
+                      {t("btn_delete")}
                     </AlertDialogTrigger>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Contact Delete</AlertDialogTitle>
+                  <AlertDialogTitle>
+                    {t("contacts_delete_action_dialog_title")}
+                  </AlertDialogTitle>
                   <AlertDialogDescription>
-                    Are you sure you want to delete this contact?
+                    {t("contacts_delete_action_dialog_message")}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogCancel>{t("btn_cancel")}</AlertDialogCancel>
                   <AlertDialogAction
                     data-testid="actions-delete-confirm"
                     onClick={() => handleDeleteContactById(rowId)}
                   >
-                    Delete
+                    {t("btn_delete")}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>

@@ -30,16 +30,18 @@ import {
 } from "~/components/ui/alert-dialog";
 import { useCustomFetcher } from "~/hooks";
 import { useNavigate } from "@remix-run/react";
+import { useTranslation } from "react-i18next";
 
 type SchedulesListProps = {
   schedules: Schedule[];
-  isLoading: boolean;
+  isLoading?: boolean;
 };
 
 export default function SchedulesList({
   schedules,
   isLoading,
 }: SchedulesListProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { submit, state } = useCustomFetcher();
   const isDeleteScheduleLoading = state === "loading" || state === "submitting";
@@ -50,8 +52,10 @@ export default function SchedulesList({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Time</TableHead>
-              <TableHead className="text-right">Availability</TableHead>
+              <TableHead>{t("scheduler_table_time_header")}</TableHead>
+              <TableHead className="text-right">
+                {t("scheduler_table_availability_header")}
+              </TableHead>
             </TableRow>
           </TableHeader>
         </Table>
@@ -69,7 +73,7 @@ export default function SchedulesList({
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-4">
-          <p>No schedules found</p>
+          <p>{t("scheduler_no_schedules_message")}</p>
         </CardContent>
       </Card>
     );
@@ -99,9 +103,11 @@ export default function SchedulesList({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Time</TableHead>
-              <TableHead>Contact</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{t("scheduler_table_time_header")}</TableHead>
+              <TableHead>{t("scheduler_table_contact_header")}</TableHead>
+              <TableHead className="text-right">
+                {t("scheduler_table_actions_header")}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -136,25 +142,29 @@ export default function SchedulesList({
                               data-testid="actions-delete"
                               className="w-full"
                             >
-                              Delete
+                              {t("btn_delete")}
                             </AlertDialogTrigger>
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Schedule Delete</AlertDialogTitle>
+                          <AlertDialogTitle>
+                            {t("scheduler_delete_action_dialog_title")}
+                          </AlertDialogTitle>
                           <AlertDialogDescription>
-                            Are you sure you want to delete this schedule?
+                            {t("scheduler_delete_action_dialog_message")}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogCancel>
+                            {t("btn_cancel")}
+                          </AlertDialogCancel>
                           <AlertDialogAction
                             data-testid="actions-delete-confirm"
                             onClick={() => handleDeleteSchedule(id)}
                           >
-                            Delete
+                            {t("btn_delete")}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>

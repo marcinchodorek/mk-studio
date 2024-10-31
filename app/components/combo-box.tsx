@@ -18,6 +18,7 @@ import {
   PopoverTrigger,
 } from "~/components/ui/popover";
 import { Label } from "./ui/label";
+import { useTranslation } from "react-i18next";
 
 type ComboboxProps = {
   id: string;
@@ -33,14 +34,17 @@ type ComboboxProps = {
 export function Combobox({
   id,
   label,
-  placeholder = "Search...",
+  placeholder,
   value,
   onChange,
   options,
   valuesById,
   testSelector,
 }: ComboboxProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+
+  const placeholderValue = placeholder || t("combobox_search_placeholder");
 
   const handleFilterByLabel = (value: string, search: string) => {
     if (valuesById) {
@@ -75,14 +79,14 @@ export function Combobox({
           >
             {value
               ? options.find((option) => option.value === value)?.label
-              : placeholder}
+              : placeholderValue}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
       </div>
       <PopoverContent className="w-[200px] p-0">
         <Command filter={handleFilterByLabel}>
-          <CommandInput placeholder="Search..." />
+          <CommandInput placeholder={t("combobox_search_placeholder")} />
           <CommandList>
             <CommandEmpty>No result found.</CommandEmpty>
             <CommandGroup>

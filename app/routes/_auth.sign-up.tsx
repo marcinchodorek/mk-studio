@@ -1,18 +1,9 @@
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  ActionFunction,
-  json,
-  LoaderFunctionArgs,
-  redirect,
-} from "@remix-run/node";
+import { ActionFunction, json } from "@remix-run/node";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 
-import {
-  getSessionCookie,
-  handleCreateCookieAndRedirect,
-} from "~/api/auth/sessionCookie";
-import { admin } from "~/api/firebase/serverConfig.server";
+import { handleCreateCookieAndRedirect } from "~/api/auth/sessionCookie";
 import { useCustomFetcher } from "~/hooks";
 import { Button } from "~/components/ui/button";
 import {
@@ -35,6 +26,7 @@ import {
 } from "~/components/ui/form";
 import { PASSWORD_REGEX } from "~/constants";
 import handleEmailSignUp from "~/api/firebase/handleEmailSignUp";
+import { useTranslation } from "react-i18next";
 
 const EmailSignUpFormSchema = z
   .object({
@@ -73,7 +65,8 @@ export const action: ActionFunction = async ({ request }) => {
   }
 };
 
-export default function _authSignUp() {
+export default function SignUp() {
+  const { t } = useTranslation();
   const { submit: handleLogInFetcher } = useCustomFetcher();
   const form = useForm<FormData>({ resolver });
 
@@ -100,12 +93,10 @@ export default function _authSignUp() {
       <CardHeader>
         <Link to="/login" className="ml-auto flex items-center gap-2 text-xs">
           <ArrowLeftIcon />
-          Back to Login
+          {t("login_back_to_login")}
         </Link>
-        <CardTitle className="text-2xl">Sign Up</CardTitle>
-        <CardDescription>
-          Enter your email below to login to your account
-        </CardDescription>
+        <CardTitle className="text-2xl">{t("login_sign_up")}</CardTitle>
+        <CardDescription>{t("login_provide_email_info")}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid gap-4">
@@ -117,7 +108,7 @@ export default function _authSignUp() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>{t("login_email_input_label")}</FormLabel>
                       <FormControl>
                         <Input placeholder="m@example.com" {...field} />
                       </FormControl>
@@ -130,7 +121,7 @@ export default function _authSignUp() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel>{t("login_password_input_label")}</FormLabel>
                       <FormControl>
                         <Input type="password" {...field} />
                       </FormControl>
@@ -143,7 +134,9 @@ export default function _authSignUp() {
                   name="confirmPassword"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Confirm Password</FormLabel>
+                      <FormLabel>
+                        {t("login_confirm_password_input_label")}
+                      </FormLabel>
                       <FormControl>
                         <Input type="password" {...field} />
                       </FormControl>
@@ -152,7 +145,7 @@ export default function _authSignUp() {
                   )}
                 />
               </div>
-              <Button className="w-full mt-2">Sign up</Button>
+              <Button className="w-full mt-2">{t("login_sign_up")}</Button>
             </form>
           </Form>
         </div>

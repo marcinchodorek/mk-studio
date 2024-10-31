@@ -34,6 +34,7 @@ import updateScheduleById from "~/api/firebase/scheduler/updateScheduleById";
 import getScheduleById from "~/api/firebase/scheduler/getScheduleById";
 import { Schedule } from "~/api/firebase/scheduler/types.server";
 import twilio from "twilio";
+import { useTranslation } from "react-i18next";
 
 export enum SchedulerType {
   Create = "create",
@@ -157,6 +158,7 @@ const SchedulerParamsSchema = z.object({
 });
 
 export default function Scheduler() {
+  const { t, i18n } = useTranslation();
   const { id, type } = useTypedParams(SchedulerParamsSchema);
   const { contacts, schedules, contactsById, selectedDate, schedule } =
     useLoaderData<SchedulerResponse>();
@@ -246,23 +248,31 @@ export default function Scheduler() {
   return (
     <Form
       method="post"
-      className="flex gap-y-4"
+      className="flex gap-y-4 flex-col md:flex-row"
       onSubmit={handleOnSaveSchedule}
     >
       <div className="flex flex-col flex-1 gap-6">
-        <div>{isUpdateSchedulePage ? "Edit Schedule" : "Create Schedule"}</div>
+        <div>
+          {t(
+            isUpdateSchedulePage
+              ? "scheduler_edit_schedule_title"
+              : "scheduler_create_schedule_title",
+          )}
+        </div>
         <Combobox
           id="scheduler-user-combobox"
           testSelector="scheduler-user-combobox"
-          label="User"
+          label={t("scheduler_user_select_label")}
           value={selectedUserId}
           onChange={setSelectedUserId}
           options={getContactListOptions(contacts)}
           valuesById={contactsById}
-          placeholder="Search user"
+          placeholder={t("scheduler_user_search_placeholder")}
         />
         <div>
-          <Label htmlFor="scheduler-calendar">Schedule date</Label>
+          <Label htmlFor="scheduler-calendar">
+            {t("scheduler_date_input_label")}
+          </Label>
           <Calendar
             id="scheduler-calendar"
             mode="single"
@@ -273,14 +283,18 @@ export default function Scheduler() {
           />
         </div>
         <div>
-          <Label htmlFor="scheduler-time-select">Schedule time</Label>
+          <Label htmlFor="scheduler-time-select">
+            {t("scheduler_time_input_label")}
+          </Label>
           <Select
             value={selectedFromTime ?? ""}
             onValueChange={setSelectedFromTime}
             disabled={isLoading}
           >
             <SelectTrigger id="scheduler-time-select" className="w-[180px]">
-              <SelectValue placeholder="Select time" />
+              <SelectValue
+                placeholder={t("scheduler_time_picker_placeholder")}
+              />
             </SelectTrigger>
             <SelectContent>
               {generateAvailableTimeSlots(schedules).map((time) => {
@@ -300,7 +314,9 @@ export default function Scheduler() {
             !isScheduleDataSelected || isSubmitScheduleLoading || !contactData
           }
         >
-          {isUpdateSchedulePage ? "Update Schedule" : "Save Schedule"}
+          {t(
+            isUpdateSchedulePage ? "btn_update_schedule" : "btn_save_schedule",
+          )}
         </Button>
       </div>
       <div className="flex-1">

@@ -7,6 +7,9 @@ import SideNav from "~/components/side-nav";
 import TopBar from "~/components/top-bar";
 import { getNavigationSessionCookie } from "~/api/sessions/navigation.server";
 import DynamicBreadcrumbs from "~/components/dynamic-breadcrumbs";
+import { useCallback, useState } from "react";
+import { twMerge } from "tailwind-merge";
+import { useDeviceContext } from "~/hooks";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const sessionCookieValue = await getSessionCookie(request);
@@ -27,13 +30,32 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function ProtectedLayout() {
   const { isSideNavCollapsed } = useLoaderData<typeof loader>();
+  const { isDesktopView } = useDeviceContext();
+  const [isOpened, setIsOpened] = useState(
+    isDesktopView && !isSideNavCollapsed,
+  );
+
+  const toggleSideNavState = useCallback(() => {
+    setIsOpened((prevState) => !prevState);
+  }, []);
 
   return (
-    <SideNav isSideNavOpen={!isSideNavCollapsed}>
-      <TopBar>
-        <DynamicBreadcrumbs />
-        <Outlet />
-      </TopBar>
-    </SideNav>
+    <>
+      <TopBar toggleSideNavState={toggleSideNavState} />
+      <div className="flex">
+        <SideNav
+          isSideNavOpen={isOpened}
+          toggleSideNavState={toggleSideNavState}
+        />
+        <div
+          className={twMerge(
+            "w-full flex flex-col p-4 overflow-auto h-[calc(100vh-56px)]",
+          )}
+        >
+          <DynamicBreadcrumbs />
+          <Outlet />
+        </div>
+      </div>
+    </>
   );
 }

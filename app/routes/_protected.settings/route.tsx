@@ -13,6 +13,7 @@ import {
 } from "~/components/ui/select";
 
 import { localeCookie } from "~/api/sessions/locale.server";
+import { Label } from "~/components/ui/label";
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
@@ -27,7 +28,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function SettingsIndex() {
   const { submit } = useFetcher();
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const [selectedLanguage, setSelectedLanguage] = useState(
     i18n.language || "en",
   );
@@ -44,15 +45,24 @@ export default function SettingsIndex() {
   };
 
   return (
-    <div className="font-sans p-4 w-1/2">
+    <div className="font-sans p-4 w-full md:w-1/2">
+      <Label htmlFor="scheduler-time-select">
+        {t("settings_language_select_label")}
+      </Label>
       <Select value={selectedLanguage} onValueChange={handleLanguageChange}>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Select a language" />
+        <SelectTrigger id="scheduler-time-select" className="w-full md:w-1/2">
+          <SelectValue
+            placeholder={t("settings_language_select_placeholder")}
+          />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            <SelectItem value="pl">Polish</SelectItem>
-            <SelectItem value="en">English</SelectItem>
+            <SelectItem value="pl">
+              {t("settings_language_polish_option")}
+            </SelectItem>
+            <SelectItem value="en">
+              {t("settings_language_english_option")}
+            </SelectItem>
           </SelectGroup>
         </SelectContent>
       </Select>

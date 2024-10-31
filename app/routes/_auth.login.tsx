@@ -26,6 +26,7 @@ import {
 import { Input } from "~/components/ui/input";
 import handleEmailSignIn from "~/api/firebase/handleEmailSignIn";
 import { PASSWORD_REGEX } from "~/constants";
+import { useTranslation } from "react-i18next";
 
 const EmailLogInFormSchema = z.object({
   email: z
@@ -53,7 +54,8 @@ export const action: ActionFunction = async ({ request }) => {
   }
 };
 
-export default function _authLogin() {
+export default function Login() {
+  const { t } = useTranslation();
   const { submit: handleLogInFetcher } = useCustomFetcher();
   const form = useForm<FormData>({ resolver });
 
@@ -94,10 +96,8 @@ export default function _authLogin() {
   return (
     <Card className="m-auto max-w-sm">
       <CardHeader>
-        <CardTitle className="text-2xl">Login</CardTitle>
-        <CardDescription>
-          Enter your email below to login to your account
-        </CardDescription>
+        <CardTitle className="text-2xl">{t("login_title")}</CardTitle>
+        <CardDescription>{t("login_provide_email_info")}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid gap-4">
@@ -108,7 +108,7 @@ export default function _authLogin() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>{t("login_email_input_label")}</FormLabel>
                     <FormControl>
                       <Input placeholder="m@example.com" {...field} />
                     </FormControl>
@@ -121,7 +121,7 @@ export default function _authLogin() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>{t("login_password_input_label")}</FormLabel>
                     <FormControl>
                       <Input type="password" {...field} />
                     </FormControl>
@@ -129,7 +129,7 @@ export default function _authLogin() {
                   </FormItem>
                 )}
               />
-              <Button className="w-full mt-2">Login</Button>
+              <Button className="w-full mt-2">{t("login_title")}</Button>
             </form>
           </Form>
           <Button
@@ -137,13 +137,13 @@ export default function _authLogin() {
             variant="outline"
             className="w-full"
           >
-            Login with Google
+            {t("login_google_option_label")}
           </Button>
         </div>
         <div className="mt-4 text-center text-sm">
-          Don&apos;t have an account?{" "}
+          {t("login_sign_up_call_to_actions")}
           <Link to="/sign-up" className="underline">
-            Sign up
+            {t("login_sign_up")}
           </Link>
         </div>
       </CardContent>

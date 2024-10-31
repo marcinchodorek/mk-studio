@@ -1,5 +1,5 @@
 import { Link } from "@remix-run/react";
-import { User } from "lucide-react";
+import { User, Menu } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
@@ -23,10 +23,12 @@ import {
 } from "~/components/ui/alert-dialog";
 
 import ThemeToggle from "~/components/theme-toggle";
-import { useCustomFetcher, useUserContext } from "~/hooks";
+import { useCustomFetcher, useDeviceContext, useUserContext } from "~/hooks";
+import { Button } from "~/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 type TopBarProps = {
-  children: React.ReactNode;
+  toggleSideNavState: () => void;
 };
 
 const getAvatarFallback = (name?: string | null) => {
@@ -37,9 +39,11 @@ const getAvatarFallback = (name?: string | null) => {
   return names[0][0] + names[1][0];
 };
 
-export default function TopBar({ children }: TopBarProps) {
+export default function TopBar({ toggleSideNavState }: TopBarProps) {
+  const { t } = useTranslation();
   const { user } = useUserContext();
   const { submit: handleUserLogout } = useCustomFetcher();
+  const { isDesktopView } = useDeviceContext();
 
   const handleLogout = () => {
     handleUserLogout(
@@ -52,49 +56,57 @@ export default function TopBar({ children }: TopBarProps) {
   };
 
   return (
-    <div className="w-full flex flex-col h-screen">
-      <div className="w-full h-14 p-4 bg-muted/40 flex items-center justify-between">
+    <div className="w-full h-14 p-4 bg-muted/40 flex items-center justify-between">
+      <div className="flex items-center gap-4">
+        {!isDesktopView && (
+          <Button variant="ghost" size="icon" onClick={toggleSideNavState}>
+            <Menu />
+          </Button>
+        )}
         <Link to="/" className="font-bold">
           studio-mk
         </Link>
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
-          <AlertDialog>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Avatar className="cursor-pointer">
-                  <AvatarImage src={user?.photoURL || ""} />
-                  <AvatarFallback>
-                    {getAvatarFallback(user?.displayName)}
-                  </AvatarFallback>
-                </Avatar>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <AlertDialogTrigger asChild>
-                  <DropdownMenuItem>Log out</DropdownMenuItem>
-                </AlertDialogTrigger>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Confirm Log out</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Are you sure you want to log out?
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleLogout}>
-                  Continue
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
       </div>
-      <div className="w-full flex flex-col p-4 overflow-auto">{children}</div>
+      <div className="flex items-center gap-2">
+        <ThemeToggle />
+        <AlertDialog>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Avatar className="cursor-pointer">
+                <AvatarImage src={user?.photoURL || ""} />
+                <AvatarFallback>
+                  {getAvatarFallback(user?.displayName)}
+                </AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>
+                {t("nav_account_dropdown_title")}
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <AlertDialogTrigger asChild>
+                <DropdownMenuItem>{t("nav_logout_option")}</DropdownMenuItem>
+              </AlertDialogTrigger>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                {t("nav_logout_confirmation_title")}
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                {t("nav_logout_confirmation_message")}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>{t("btn_cancel")}</AlertDialogCancel>
+              <AlertDialogAction onClick={handleLogout}>
+                {t("btn_confirm")}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
     </div>
   );
 }
