@@ -35,7 +35,7 @@
   "login_confirm_password_input_label": "Confirm password",
   "login_google_option_label": "Login with Google",
   "login_sign_up": "Sign Up",
-  "login_sign_up_call_to_action": "Don't have an account? Sign up",
+  "login_sign_up_call_to_action": "Don't have an account? ",
   "login_back_to_login": "Back to login",
   "nav_home_title": "Home",
   "nav_contacts_title": "Contacts",

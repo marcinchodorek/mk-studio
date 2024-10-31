@@ -3,6 +3,7 @@ export type ScheduleRequestBody = {
   contactName: string;
   date: string;
   time: string;
+  messageId: string;
 };
 
 export type Schedule = {
@@ -12,5 +13,6 @@ export type Schedule = {
   date: string;
   time: string;
   createdAt: string;
+  messageId: string;
   updatedAt?: string;
 };

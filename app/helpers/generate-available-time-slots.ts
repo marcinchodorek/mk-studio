@@ -1,7 +1,7 @@
-import { Appointment } from "~/api/firebase/appointments-schedule/types.server";
+import { Schedule } from "~/api/firebase/scheduler/types.server";
 import generateTimeSlots from "~/helpers/generate-time-slots";
 
-const generateAvailableTimeSlots = (appointments: Appointment[]): string[] => {
+const generateAvailableTimeSlots = (appointments: Schedule[]): string[] => {
   const timeSlots = generateTimeSlots();
 
   return timeSlots.filter((time) => {

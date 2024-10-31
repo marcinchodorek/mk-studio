@@ -84,6 +84,11 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { id, type } = params;
   const formData = await request.formData();
 
+  const accountSid = process.env.TWILIO_ACCOUNT_SID;
+  const authToken = process.env.TWILIO_AUTH_TOKEN;
+
+  const client = twilio(accountSid, authToken);
+
   switch (type) {
     case SchedulerType.Create: {
       const time = formData.get("time") as string;
@@ -97,35 +102,26 @@ export async function action({ request, params }: ActionFunctionArgs) {
         "yyyy-MM-dd HH:mm",
       )
         .minus({ hours: 1 })
-        .toISO();
+        .toJSDate();
 
-      const now = DateTime.now().plus({ minute: 2 }).toJSDate();
+      // const now = DateTime.now().plus({ minute: 6 }).toJSDate();
 
-      console.log("parsedDate", parsedDate);
-      console.log("phoneNumber", phoneNumber);
-      console.log("contactName", contactName);
-      console.log("now", now);
+      const createdMessage = await client.messages.create({
+        body: `Message to ${contactName}`,
+        from: "Studio MK",
+        to: phoneNumber,
+        scheduleType: "fixed",
+        sendAt: parsedDate,
+        messagingServiceSid: "MGcb7300c4278900055af6cb7060e5ee48",
+      });
 
-      const accountSid = process.env.TWILIO_ACCOUNT_SID;
-      const authToken = process.env.TWILIO_AUTH_TOKEN;
-
-      const client = twilio(accountSid, authToken);
-
-      // await client.messages.create({
-      //   body: `Message to ${contactName}`,
-      //   from: "+12568277567",
-      //   to: phoneNumber,
-      //   scheduleType: "fixed",
-      //   sendAt: now,
-      //   MessagingServiceSid: "",
-      // });
-
-      // await createSchedule({
-      //   contactId,
-      //   contactName,
-      //   date,
-      //   time,
-      // });
+      await createSchedule({
+        contactId,
+        contactName,
+        date,
+        time,
+        messageId: createdMessage.sid,
+      });
       return null;
     }
     case SchedulerType.Update: {
@@ -143,6 +139,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
       return null;
     }
     case SchedulerType.Delete: {
+      const messageId = formData.get("messageId") as string;
+      await client.messages(messageId).update({ status: "canceled" });
       await deleteScheduleById(id ?? "");
       return null;
     }

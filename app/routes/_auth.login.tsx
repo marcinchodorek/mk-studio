@@ -141,7 +141,7 @@ export default function Login() {
           </Button>
         </div>
         <div className="mt-4 text-center text-sm">
-          {t("login_sign_up_call_to_actions")}
+          {t("login_sign_up_call_to_action")}
           <Link to="/sign-up" className="underline">
             {t("login_sign_up")}
           </Link>

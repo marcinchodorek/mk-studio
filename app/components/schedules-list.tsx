@@ -83,9 +83,9 @@ export default function SchedulesList({
     a.time.localeCompare(b.time),
   );
 
-  const handleDeleteSchedule = (id: string) => {
+  const handleDeleteSchedule = (id: string, messageId: string) => {
     submit(
-      {},
+      { messageId },
       {
         method: "delete",
         action: `/scheduler/${id}/delete`,
@@ -111,7 +111,7 @@ export default function SchedulesList({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedSchedules.map(({ time, contactName, id }) => {
+            {sortedSchedules.map(({ time, contactName, id, messageId }) => {
               return (
                 <TableRow key={id}>
                   <TableCell>{time}</TableCell>
@@ -162,7 +162,7 @@ export default function SchedulesList({
                           </AlertDialogCancel>
                           <AlertDialogAction
                             data-testid="actions-delete-confirm"
-                            onClick={() => handleDeleteSchedule(id)}
+                            onClick={() => handleDeleteSchedule(id, messageId)}
                           >
                             {t("btn_delete")}
                           </AlertDialogAction>
