@@ -56,6 +56,9 @@ export const action: ActionFunction = async ({ request }) => {
       decodedToken.email,
     )) as string[];
 
+    console.log("idToken", idToken);
+    console.log("decodedToken", decodedToken);
+    console.log("decodedToken.email", decodedToken.email);
     console.log("authorizedEmail", authorizedEmail);
 
     if (!authorizedEmail?.length) {
@@ -95,6 +98,7 @@ export default function Login() {
   const handleGoogleLogInOnClick = async () => {
     try {
       const idToken = await handleGoogleSignIn();
+      console.log("idToken", idToken);
 
       handleLogInFetcher(
         { idToken },

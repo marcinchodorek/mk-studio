@@ -1,10 +1,5 @@
 import admin, { ServiceAccount } from "firebase-admin";
 
-console.log(
-  "process.env.FIREBASE_ADMIN_PRIVATE_KEY",
-  process.env.FIREBASE_ADMIN_PRIVATE_KEY,
-);
-
 const serviceAccount = {
   projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
   clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
