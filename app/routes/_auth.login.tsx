@@ -28,6 +28,9 @@ import handleEmailSignIn from "~/api/firebase/handleEmailSignIn";
 import { PASSWORD_REGEX } from "~/constants";
 import { useTranslation } from "react-i18next";
 
+import { auth } from "~/api/firebase/serverConfig.server";
+import getAuthorizedEmail from "~/api/firebase/auth/getAuthorizedEmail.server";
+
 const EmailLogInFormSchema = z.object({
   email: z
     .string({ required_error: "Email is required" })
@@ -46,8 +49,20 @@ const resolver = zodResolver(EmailLogInFormSchema);
 
 export const action: ActionFunction = async ({ request }) => {
   const idToken = (await request.formData()).get("idToken") as string;
+
   try {
-    return await handleCreateCookieAndRedirect(request, idToken);
+    const decodedToken = await auth.verifyIdToken(idToken);
+    const authorizedEmail = (await getAuthorizedEmail(
+      decodedToken.email,
+    )) as string[];
+
+    console.log("authorizedEmail", authorizedEmail);
+
+    if (!authorizedEmail?.length) {
+      return json({ error: "Unauthorized" }, { status: 401 });
+    } else {
+      return await handleCreateCookieAndRedirect(request, idToken);
+    }
   } catch (error) {
     console.error("Error creating session cookie:", error);
     return json({ error: "Unauthorized" }, { status: 401 });

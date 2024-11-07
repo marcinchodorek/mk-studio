@@ -52,7 +52,7 @@ export default function ProtectedLayout() {
             "w-full flex flex-col p-4 overflow-auto h-[calc(100vh-56px)]",
           )}
         >
-          <DynamicBreadcrumbs />
+          {/*<DynamicBreadcrumbs />*/}
           <Outlet />
         </div>
       </div>

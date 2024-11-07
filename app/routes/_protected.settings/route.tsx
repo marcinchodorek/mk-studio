@@ -57,12 +57,8 @@ export default function SettingsIndex() {
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            <SelectItem value="pl">
-              {t("settings_language_polish_option")}
-            </SelectItem>
-            <SelectItem value="en">
-              {t("settings_language_english_option")}
-            </SelectItem>
+            <SelectItem value="pl">Polski</SelectItem>
+            <SelectItem value="en">English</SelectItem>
           </SelectGroup>
         </SelectContent>
       </Select>

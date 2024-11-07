@@ -1,12 +1,21 @@
 import { DateTime } from "luxon";
 
-const generateTimeSlots = (): string[] => {
-  const currentHour = DateTime.now().plus({ hour: 2 }).get("hour");
+const generateTimeSlots = (date: Date | undefined): string[] => {
+  if (!date) {
+    return [];
+  }
+
+  const now = DateTime.now();
+  const dateValue = DateTime.fromJSDate(date);
+  const isToday = now.hasSame(dateValue, "day");
+
+  const currentHourWithOffset = now.plus({ hour: 2 }).get("hour");
+
   return Array(17)
     .fill(5)
     .reduce((slots, hour, index) => {
       const currentSlotHour = hour + index;
-      if (currentHour > currentSlotHour) {
+      if (currentHourWithOffset > currentSlotHour && isToday) {
         return slots;
       }
 

@@ -104,10 +104,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
         .minus({ hours: 1 })
         .toJSDate();
 
-      // const now = DateTime.now().plus({ minute: 6 }).toJSDate();
-
       const createdMessage = await client.messages.create({
-        body: `Message to ${contactName}`,
+        body: `Przypominamy o nadchodzącej wizycie. Wizyta zaplanowana jest na ${time} dnia ${date}.`,
         from: "Studio MK",
         to: phoneNumber,
         scheduleType: "fixed",
@@ -156,7 +154,7 @@ const SchedulerParamsSchema = z.object({
 });
 
 export default function Scheduler() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { id, type } = useTypedParams(SchedulerParamsSchema);
   const { contacts, schedules, contactsById, selectedDate, schedule } =
     useLoaderData<SchedulerResponse>();
@@ -295,7 +293,7 @@ export default function Scheduler() {
               />
             </SelectTrigger>
             <SelectContent>
-              {generateAvailableTimeSlots(schedules).map((time) => {
+              {generateAvailableTimeSlots(schedules, date).map((time) => {
                 return (
                   <SelectItem key={time} value={time}>
                     {time}
