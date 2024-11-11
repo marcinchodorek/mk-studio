@@ -58,6 +58,8 @@ export const action: ActionFunction = async ({ request }) => {
       decodedToken.email,
     )) as string[];
 
+    console.log("authorizedEmail", authorizedEmail);
+
     if (!authorizedEmail?.length) {
       return json({ error: "Unauthorized" }, { status: 401 });
     } else {
