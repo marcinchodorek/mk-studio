@@ -2,13 +2,13 @@ import { createCookieSessionStorage, redirect } from "@remix-run/node";
 import { admin } from "../firebase/serverConfig.server";
 
 type SessionBody = {
-  sessionToken: string;
+  __session: string;
 };
 
 const { getSession, commitSession, destroySession } =
   createCookieSessionStorage<SessionBody>({
     cookie: {
-      name: "sessionToken",
+      name: "__session",
       maxAge: 60 * 60 * 24 * 5, // 5 days
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -20,7 +20,7 @@ const { getSession, commitSession, destroySession } =
 
 export const getSessionCookie = async (request: Request) => {
   const session = await getSession(request.headers.get("Cookie"));
-  return session.get("sessionToken") as string;
+  return session.get("__session") as string;
 };
 
 export const handleCreateCookieAndRedirect = async (
@@ -34,7 +34,7 @@ export const handleCreateCookieAndRedirect = async (
     .auth()
     .createSessionCookie(idToken, { expiresIn });
 
-  session.set("sessionToken", sessionToken);
+  session.set("__session", sessionToken);
   return redirect("/", {
     headers: {
       "Set-Cookie": await commitSession(session),
