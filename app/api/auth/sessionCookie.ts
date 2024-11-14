@@ -30,9 +30,12 @@ export const handleCreateCookieAndRedirect = async (
   const session = await getSession(request.headers.get("Cookie"));
   const expiresIn = 60 * 60 * 24 * 5 * 1000; // 5 days
   await admin.auth().verifyIdToken(idToken);
+  console.log("idToken", idToken);
   const sessionToken = await admin
     .auth()
     .createSessionCookie(idToken, { expiresIn });
+
+  console.log("sessionToken", sessionToken);
 
   session.set("__session", sessionToken);
   return redirect("/", {

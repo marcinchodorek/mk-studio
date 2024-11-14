@@ -52,6 +52,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   try {
     const decodedToken = await auth.verifyIdToken(idToken);
+    console.log("decodedToken", decodedToken);
     const authorizedEmail = (await getAuthorizedEmail(
       decodedToken.email,
     )) as string[];
