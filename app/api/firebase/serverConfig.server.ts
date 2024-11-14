@@ -1,12 +1,15 @@
 import admin, { ServiceAccount } from "firebase-admin";
 
+console.log(
+  "serviceAccount",
+  process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+);
+
 const serviceAccount = {
   projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
   clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
   privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, "\n"),
 } as ServiceAccount;
-
-console.log("serviceAccount", serviceAccount);
 
 if (!admin.apps.length) {
   admin.initializeApp({
