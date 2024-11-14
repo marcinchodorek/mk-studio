@@ -6,6 +6,8 @@ const serviceAccount = {
   privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, "\n"),
 } as ServiceAccount;
 
+console.log("serviceAccount", serviceAccount);
+
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
