@@ -57,11 +57,11 @@ export const action: ActionFunction = async ({ request }) => {
       decodedToken.email,
     )) as string[];
 
-    if (!authorizedEmail?.length) {
-      return json({ error: "Unauthorized" }, { status: 401 });
-    } else {
-      return await handleCreateCookieAndRedirect(request, idToken);
-    }
+    // if (!authorizedEmail?.length) {
+    //   return json({ error: "Unauthorized" }, { status: 401 });
+    // } else {
+    return await handleCreateCookieAndRedirect(request, idToken);
+    // }
   } catch (error) {
     console.error("Error creating session cookie:", error);
     return json({ error: "Unauthorized" }, { status: 401 });
