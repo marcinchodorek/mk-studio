@@ -51,16 +51,16 @@ export const action: ActionFunction = async ({ request }) => {
   const idToken = (await request.formData()).get("idToken") as string;
 
   try {
-    // const decodedToken = await auth.verifyIdToken(idToken);
-    // const authorizedEmail = (await getAuthorizedEmail(
-    //   decodedToken.email,
-    // )) as string[];
-    //
-    // if (!authorizedEmail?.length) {
-    //   return json({ error: "Unauthorized" }, { status: 401 });
-    // } else {
-    return await handleCreateCookieAndRedirect(request, idToken);
-    // }
+    const decodedToken = await auth.verifyIdToken(idToken);
+    const authorizedEmail = (await getAuthorizedEmail(
+      decodedToken.email,
+    )) as string[];
+
+    if (!authorizedEmail?.length) {
+      return json({ error: "Unauthorized" }, { status: 401 });
+    } else {
+      return await handleCreateCookieAndRedirect(request, idToken);
+    }
   } catch (error) {
     console.error("Error creating session cookie:", error);
     return json({ error: "Unauthorized" }, { status: 401 });
